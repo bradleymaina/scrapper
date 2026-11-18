@@ -4,7 +4,7 @@ Fetch questions and sources from  quizes and assignments on lms and save on syst
 
 ## What it does
 
-`emasomo_spider.py` downloads the questions from a finished quiz attempt on the
+`emasomo_spider.py` downloads the questions from a current  quiz attempt on the
 [E-masomo](https://emasomo.cuk.ac.ke) Moodle LMS by reading the attempt's
 review page (`/mod/quiz/review.php`).
 
