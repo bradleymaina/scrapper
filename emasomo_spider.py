@@ -6,7 +6,7 @@ from rich.table import Table
 from rich.panel import Panel
 from rich import box
 
-BASE = "https://emasomo.cuk.ac.ke/mod/quiz/review.php"
+BASE = "https://emasomo.cuk.ac.ke/mod/quiz/attempt.php"
 PARAMS = {"attempt": 1428740, "cmid": 396554}
 COOKIE = "d0fc7ns949erua31e2kcchg3jm"
 WRITE_MARKDOWN = True   # also create questions.md for easy reading
