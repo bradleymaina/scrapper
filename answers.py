@@ -1,6 +1,4 @@
-"""This model takes the extracted questions in questions.md and parses them to google gemini using the api token. Gemini answers the questions and returns answers.md """
-
-import os, json, time, sys
+import os, re, json, time, sys
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
@@ -10,27 +8,56 @@ API_KEY = os.environ.get("GEMINI_API_TOKEN")
 if not API_KEY:
     sys.exit("GEMINI_API_TOKEN not found in .env")
 
-MODEL = "gemini-2.5-flash"   # swap for any model your key lists in AI Studio
-DELAY = 6                    # seconds between calls, keeps you under free-tier per-minute limits
-INPUT = "questions.json"
+MODEL = "gemini-3.5-flash-lite"   # swap for a model your key lists in AI Studio
+DELAY = 6                    # seconds between calls (free-tier rate limits)
+INPUT = sys.argv[1] if len(sys.argv) > 1 else "questions.md"
 
 client = genai.Client(api_key=API_KEY)
 
 SYSTEM = (
-    "You are a student sitting for an examination. "
-    "Pick the best answer for each question without explaining "
-    "Reason through every question but do not give the reasoning , just the answer "
+    "You are a student sitting for an examination "
+    "Pick the best answer. DO NOT EXPLAIN "
+    "reason through every question. do not  show reasoning  just  answer"
     "unsure, say so and lower the confidence. Reply ONLY with JSON: "
-    '{"answer": "<letter and text of the option, or the answer for non-multiple-choice>", '
+    '{"answer": "<letter and text of the option>",' 
     '"explanation": "<2-4 sentences>", "confidence": "high|medium|low"}'
 )
 
 
+def load_markdown(path):
+    text = open(path, encoding="utf-8").read()
+    parts = re.split(r"^## Question (\d+)\s*$", text, flags=re.M)
+    questions = []
+    for num, body in zip(parts[1::2], parts[2::2]):
+        body = body.split("\n---")[0]
+        q_lines, options = [], []
+        for line in body.splitlines():
+            s = line.strip()
+            m = re.match(r"^- \*\*([a-z0-9]+)\.\*\*\s*(.*)", s)
+            if m:
+                letter, opt = m.group(1), m.group(2).strip()
+                opt = re.sub(rf"^{re.escape(letter)}\.\s*", "", opt)
+                options.append({"text": opt, "images": []})
+            elif s.startswith(("- ![", "![", "- **")) or not s:
+                continue
+            elif not options:
+                q_lines.append(s)
+        qtext = " ".join(q_lines)
+        missing = (not qtext) or "text missing" in qtext
+        questions.append({
+            "number": int(num),
+            "type": None,
+            "question": "" if missing else qtext,
+            "options": options,
+            "text_missing": missing,
+        })
+    return questions
+
+
 def build_prompt(q):
-    lines = [f"Question {q['number']} (type: {q.get('type') or 'unknown'}):", q["question"], ""]
+    lines = [f"Question {q['number']}:", q["question"], ""]
     for i, o in enumerate(q["options"]):
-        letter = chr(ord("a") + i) if i < 26 else str(i + 1)
-        lines.append(f"{letter}. {o['text']}")
+        lines.append(f"{chr(ord('a') + i)}. {o['text']}")
     return "\n".join(lines)
 
 
@@ -54,8 +81,13 @@ def ask(q):
     return {"answer": None, "explanation": "Failed after retries", "confidence": "none"}
 
 
-with open(INPUT, encoding="utf-8") as f:
-    questions = json.load(f)
+if INPUT.endswith(".md"):
+    questions = load_markdown(INPUT)
+else:
+    with open(INPUT, encoding="utf-8") as f:
+        questions = json.load(f)
+
+# questions = questions[:3]   # uncomment for a cheap 3-question test
 
 results = []
 for q in questions:
@@ -76,18 +108,4 @@ for q in questions:
 with open("answers.json", "w", encoding="utf-8") as f:
     json.dump(results, f, ensure_ascii=False, indent=2)
 
-with open("answers.md", "w", encoding="utf-8") as f:
-    f.write("# Quiz review\n\n")
-    for r in results:
-        f.write(f"## Question {r['number']}\n\n{r['question'] or '*(text missing)*'}\n\n")
-        for i, o in enumerate(r["options"]):
-            f.write(f"- {chr(ord('a') + i)}. {o['text']}\n")
-        g = r["gemini"]
-        if g:
-            f.write(f"\n**Gemini's answer:** {g.get('answer')}  (confidence: {g.get('confidence')})\n\n")
-            f.write(f"{g.get('explanation')}\n")
-        else:
-            f.write(f"\n*Skipped: {r['skipped']}*\n")
-        f.write("\n---\n\n")
-
-print("\nSaved answers.json and answers.md", file=sys.stderr)
+print("\nSaved answers.json", file=sys.stderr)
