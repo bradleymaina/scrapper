@@ -8,7 +8,7 @@ from rich import box
 
 url = input("Enter url(copy from browser tab): ")
 parsed_url = urlparse(url)
-querry_params = parse_qs(parsed_url.querry)
+query_params = parse_qs(parsed_url.query)
 
 
 BASE = "https://emasomo.cuk.ac.ke/mod/quiz/attempt.php"
