@@ -1,14 +1,23 @@
 import requests, json, time, os
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse, parse_qs
 from bs4 import BeautifulSoup
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
 from rich import box
 
+url = input("Enter url: (copy from browser tab)")
+parsed_url = urlparse(url)
+querry_params = parse_qs(parsed_url.querry)
+
+
 BASE = "https://emasomo.cuk.ac.ke/mod/quiz/attempt.php"
-PARAMS = {"attempt": 1428740, "cmid": 396554}
-COOKIE = "d0fc7ns949erua31e2kcchg3jm"
+PARAMS = {
+        "attempt": int(querry_params["attempt"][0]),
+        "cmid": int(querry_params["cmid"][0]),
+        }
+
+COOKIE = "7hkejqvfir901tbis9k0knkiv2"
 WRITE_MARKDOWN = True   # also create questions.md for easy reading
 
 console = Console()
