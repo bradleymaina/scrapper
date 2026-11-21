@@ -17,7 +17,27 @@ PARAMS = {
         "cmid": int(querry_params["cmid"][0]),
         }
 
-COOKIE = "7hkejqvfir901tbis9k0knkiv2"
+def show_cookie_instructions():
+    print("=" * 50)
+    print("COOKIE SETUP")
+    print("=" * 50)
+    print(
+            """
+            You need to retrieve cookie value from your browser
+
+            1. Open Browser
+            2. Log in to emasomo and open the quiz or assignment you are trying to do 
+            3. Press F12 for developer tools or right click and click inspect
+            4. Navigate to the Application Tab
+            5. Go to the cookie section and copy the value of Moodle session
+            6. Paste this string when prompted to enter cookie value
+
+            YOUR COOKIE IS SENSITIVE DO NOT SHARE IT WITH ANYONE ELSE
+            """
+            )
+    print("=" * 50)
+
+COOKIE = input("Enter cookie value: ")
 WRITE_MARKDOWN = True   # also create questions.md for easy reading
 
 console = Console()
