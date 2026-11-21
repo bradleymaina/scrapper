@@ -13,8 +13,8 @@ querry_params = parse_qs(parsed_url.querry)
 
 BASE = "https://emasomo.cuk.ac.ke/mod/quiz/attempt.php"
 PARAMS = {
-        "attempt": int(querry_params["attempt"][0]),
-        "cmid": int(querry_params["cmid"][0]),
+        "attempt": int(query_params["attempt"][0]),
+        "cmid": int(query_params["cmid"][0]),
         }
 
 def show_cookie_instructions():
