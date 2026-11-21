@@ -6,7 +6,7 @@ from rich.table import Table
 from rich.panel import Panel
 from rich import box
 
-url = input("Enter url: (copy from browser tab)")
+url = input("Enter url(copy from browser tab): ")
 parsed_url = urlparse(url)
 querry_params = parse_qs(parsed_url.querry)
 
