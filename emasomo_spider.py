@@ -37,6 +37,7 @@ def show_cookie_instructions():
             )
     print("=" * 50)
 
+show_cookie_instructions()
 COOKIE = input("Enter cookie value: ")
 WRITE_MARKDOWN = True   # also create questions.md for easy reading
 
