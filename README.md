@@ -6,7 +6,7 @@ Fetch questions and sources from  quizes and assignments on lms and save on syst
 
 `emasomo_spider.py` downloads the questions from a current  quiz attempt on the
 [E-masomo](https://emasomo.cuk.ac.ke) Moodle LMS by reading the attempt's
-review page (`/mod/quiz/review.php`).
+live  page (`/mod/quiz/attempt.php`).
 
 1. **Logs in with your session.** It does not take a username or password.
    It sends the `MoodleSession` cookie set in `COOKIE`, so you must already be
@@ -35,6 +35,7 @@ review page (`/mod/quiz/review.php`).
 6. **Prints a summary table** in the terminal listing each question's
    number, type, a short preview, how many options and images it has, and
    whether its text was found.
+7. **answers.py takes the questions and feeds them to gemini through their free api key and gemini answers the questions and gives back answers. Answers are saved in answers.md
 
 ### Example `questions.json` entry
 
@@ -59,17 +60,16 @@ These are set at the top of `emasomo_spider.py`:
 | Setting          | Purpose                                                        |
 | ---------------- | -------------------------------------------------------------- |
 | `COOKIE`         | Your `MoodleSession` cookie value from the browser             |
-| `PARAMS`         | The `attempt` and `cmid` from the quiz review page URL          |
+| `PARAMS`         | The `attempt` and `cmid` from the quiz  page URL          |
 | `WRITE_MARKDOWN` | Whether to write `questions.md` as well as `questions.json`    |
 
 To scrape a different quiz, open its review page in the browser and copy the
 `attempt` and `cmid` values from the URL into `PARAMS`.
 
-> The script only reads the review page of an attempt you can already see.
 > Only use it on your own account.
 
 
-## requirments
+## requirements
 
 ```python 3.0 > ```
 
