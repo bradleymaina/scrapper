@@ -5,6 +5,7 @@ from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
 from rich import box
+import tempfile
 
 url = input("Enter url(copy from browser tab): ")
 parsed_url = urlparse(url)
@@ -39,7 +40,7 @@ def show_cookie_instructions():
 
 show_cookie_instructions()
 COOKIE = input("Enter cookie value: ")
-WRITE_MARKDOWN = True   # also create questions.md for easy reading
+WRITE_MARKDOWN = False   # also create questions.md for easy reading
 
 console = Console()
 
