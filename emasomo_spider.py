@@ -6,6 +6,8 @@ from rich.table import Table
 from rich.panel import Panel
 from rich import box
 import tempfile
+from pathlib import Path
+
 
 url = input("Enter url(copy from browser tab): ")
 parsed_url = urlparse(url)
@@ -40,7 +42,6 @@ def show_cookie_instructions():
 
 show_cookie_instructions()
 COOKIE = input("Enter cookie value: ")
-WRITE_MARKDOWN = False   # also create questions.md for easy reading
 
 console = Console()
 
@@ -116,7 +117,7 @@ while page < 40:
             "number": len(questions) + 1,
             "type": qtype,
             "question": text,
-            "question_images": q_imgs,
+            "question_images": q_imgs,i
             "options": options,
             "text_missing": not text,
         })
@@ -130,20 +131,6 @@ while page < 40:
 with open("questions.json", "w", encoding="utf-8") as f:
     json.dump(questions, f, ensure_ascii=False, indent=2)
 
-if WRITE_MARKDOWN:
-    with open("questions.md", "w", encoding="utf-8") as f:
-        f.write("# Quiz Questions\n\n")
-        for q in questions:
-            f.write(f"## Question {q['number']}\n\n")
-            f.write((q["question"] or "*(text missing, see images)*") + "\n\n")
-            for u in q["question_images"]:
-                f.write(f"![question image]({u})\n\n")
-            for i, o in enumerate(q["options"]):
-                letter = chr(ord("a") + i) if i < 26 else str(i + 1)
-                f.write(f"- **{letter}.** {o['text']}\n")
-                for u in o["images"]:
-                    f.write(f"  - ![option image]({u})\n")
-            f.write("\n---\n\n")
 
 # ---- summary table ----
 table = Table(title="Extraction summary", box=box.ROUNDED, header_style="bold magenta")
