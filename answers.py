@@ -80,32 +80,38 @@ def ask(q):
             time.sleep(wait)
     return {"answer": None, "explanation": "Failed after retries", "confidence": "none"}
 
+def main():
+    if INPUT.endswith(".md"):
+        questions = load_markdown(INPUT)
+    else:
+        with open(INPUT, encoding="utf-8") as f:
+            questions = json.load(f)
 
-if INPUT.endswith(".md"):
-    questions = load_markdown(INPUT)
-else:
-    with open(INPUT, encoding="utf-8") as f:
-        questions = json.load(f)
+    # questions = questions[:3]   # uncomment for a cheap 3-question test
 
-# questions = questions[:3]   # uncomment for a cheap 3-question test
+    results = []
+    for q in questions:
+        if q.get("text_missing") or not q["question"]:
+            print(f"Q{q['number']}: text missing (image only), skipped", file=sys.stderr)
+            results.append({**q, "gemini": None, "skipped": "image-only question"})
+            continue
 
-results = []
-for q in questions:
-    if q.get("text_missing") or not q["question"]:
-        print(f"Q{q['number']}: text missing (image only), skipped", file=sys.stderr)
-        results.append({**q, "gemini": None, "skipped": "image-only question"})
-        continue
+        print(f"Q{q['number']}: asking Gemini...", file=sys.stderr)
+        r = ask(q)
+        results.append({**q, "gemini": r, "skipped": None})
 
-    print(f"Q{q['number']}: asking Gemini...", file=sys.stderr)
-    r = ask(q)
-    results.append({**q, "gemini": r, "skipped": None})
+        print(f"\nQ{q['number']}. {q['question']}")
+        print(f"   Answer: {r.get('answer')}  [{r.get('confidence')}]")
+        print(f"   Why: {r.get('explanation')}")
+        time.sleep(DELAY)
 
-    print(f"\nQ{q['number']}. {q['question']}")
-    print(f"   Answer: {r.get('answer')}  [{r.get('confidence')}]")
-    print(f"   Why: {r.get('explanation')}")
-    time.sleep(DELAY)
+    with open("answers.json", "w", encoding="utf-8") as f:
+        json.dump(results, f, ensure_ascii=False, indent=2)
 
-with open("answers.json", "w", encoding="utf-8") as f:
-    json.dump(results, f, ensure_ascii=False, indent=2)
+    print("\nSaved answers.json", file=sys.stderr)
 
-print("\nSaved answers.json", file=sys.stderr)
+
+if __name__ == "__main__":
+    main()
+
+
