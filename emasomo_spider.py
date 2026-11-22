@@ -82,6 +82,13 @@ console.print(Panel.fit("[bold cyan]E-masomo Quiz Extractor[/bold cyan]\n"
 questions, seen = [], set()
 page = 0
 
+def download_image(url, destination):
+    response = s.get(url, timeout=30 )
+    response.raise_for_status()
+
+    destination.write_bytes(response.content)
+    return destination
+
 while page < 40:
     with console.status(f"[cyan]Fetching page {page}..."):
         r = get(page)
@@ -117,7 +124,7 @@ while page < 40:
             "number": len(questions) + 1,
             "type": qtype,
             "question": text,
-            "question_images": q_imgs,i
+            "question_images": q_imgs,
             "options": options,
             "text_missing": not text,
         })
@@ -127,10 +134,27 @@ while page < 40:
     page += 1
     time.sleep(1.5)
 
-# ---- save files ----
-with open("questions.json", "w", encoding="utf-8") as f:
-    json.dump(questions, f, ensure_ascii=False, indent=2)
+# ---- save files to temporary directory  ----
+with tempfile.TemporaryDirectory(prefix="quiz__") as temp_dir:
+    image_dir = Path(temp_dir)
 
+    for q in questions:
+        q["question_image_files"] = []
+
+        for i, url in enumerate(q["question_images"]):
+            path = image_dir / f"q{q['number']}_question_{i}.jpg"
+            download_image(url, path)
+            q["question_image_files"].append(path)
+
+        for i, option in enumerate(q["options"]):
+            option["image_files"] = []
+
+            for j, url in enumerate(option["images"]):
+                path = image_dir / f"q{q['number']}_option_{i}_{j}.jpg"
+                download_image(url, path)
+                option["image_files"].append(path)
+
+    console.print("[green]Image downloads complete.[/green]")
 
 # ---- summary table ----
 table = Table(title="Extraction summary", box=box.ROUNDED, header_style="bold magenta")
@@ -148,8 +172,4 @@ for q in questions:
                   str(len(q["options"])), str(imgs), status)
 
 console.print(table)
-console.print(Panel.fit(
-    f"[bold green]Saved {len(questions)} questions[/bold green]\n"
-    f"JSON: {os.path.abspath('questions.json')}"
-    + (f"\nMarkdown: {os.path.abspath('questions.md')}" if WRITE_MARKDOWN else ""),
-    border_style="green"))
+
