@@ -61,12 +61,22 @@ def build_prompt(q):
     return "\n".join(lines)
 
 
-def ask(q):
+def ask(q, image_files=None):
     for attempt in range(5):
         try:
+            contents = [build_prompt(q)]
+
+            if image_files:
+                for path in image_files:
+                    contents.append(
+                            types.Part.from_bytes(
+                                data=path.read_bytes(),
+                                mime_type="image/jpeg",
+                                )
+                            )
             resp = client.models.generate_content(
                 model=MODEL,
-                contents=build_prompt(q),
+                contents=contents,
                 config=types.GenerateContentConfig(
                     system_instruction=SYSTEM,
                     response_mime_type="application/json",
