@@ -7,6 +7,7 @@ from rich.panel import Panel
 from rich import box
 import tempfile
 from pathlib import Path
+import answers
 
 
 url = input("Enter url(copy from browser tab): ")
@@ -154,7 +155,9 @@ with tempfile.TemporaryDirectory(prefix="quiz__") as temp_dir:
                 download_image(url, path)
                 option["image_files"].append(path)
 
-    console.print("[green]Image downloads complete.[/green]")
+        console.print("[green]Image downloads complete.[/green]")
+
+
 
 # ---- summary table ----
 table = Table(title="Extraction summary", box=box.ROUNDED, header_style="bold magenta")
