@@ -165,6 +165,10 @@ with tempfile.TemporaryDirectory(prefix="quiz__") as temp_dir:
 
         q["gemini"] = answers.ask(q, image_files)
 
+        console.print(f"\n[bold cyan]Q{q['number']}[/bold cyan]")
+        console.print(f"[green]Answer:[/green] {q['gemini'].get('answer')}")
+        console.print(f"[yellow]Confidence:[/yellow] {q['gemini'].get('confidence')}")
+
 
 
 # ---- summary table ----
