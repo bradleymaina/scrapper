@@ -15,12 +15,18 @@ INPUT = sys.argv[1] if len(sys.argv) > 1 else "questions.md"
 client = genai.Client(api_key=API_KEY)
 
 SYSTEM = (
-    "You are a student sitting for an examination "
-    "Pick the best answer. DO NOT EXPLAIN "
-    "reason through every question. do not  show reasoning  just  answer"
-    "unsure, say so and lower the confidence. Reply ONLY with JSON: "
-    '{"answer": "<letter and text of the option>",' 
-    '"explanation": "<2-4 sentences>", "confidence": "high|medium|low"}'
+    "You are an expert question solver. "
+    "Solve each question carefully, including any images provided. "
+    "For multiple-choice questions, select the single best option. "
+    "Return only the option letter, such as a, b, c, or d. "
+    "For open-ended questions with a definitive answer, solve the problem "
+    "and return only the final answer. For mathematical questions, "
+    "calculate the answer rather than merely describing the method. "
+    "If a question is missing options, do not invent options. "
+    "If the question cannot be answered confidently, indicate uncertainty. "
+    "Do not include explanations, working steps, reasoning, or extra text. "
+    "Return ONLY valid JSON in this format: "
+    '{"answer": "<final answer>", "confidence": "high|medium|low"}'
 )
 
 
