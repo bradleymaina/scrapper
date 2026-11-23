@@ -157,6 +157,12 @@ with tempfile.TemporaryDirectory(prefix="quiz__") as temp_dir:
 
         console.print("[green]Image downloads complete.[/green]")
 
+    for q in questions: 
+        image_files = q["question_image_files"].copy()
+
+        for options in q["options"]:
+            image_files.extend(option["image_files"])
+
 
 
 # ---- summary table ----
