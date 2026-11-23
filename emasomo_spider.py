@@ -163,6 +163,8 @@ with tempfile.TemporaryDirectory(prefix="quiz__") as temp_dir:
         for options in q["options"]:
             image_files.extend(option["image_files"])
 
+        result = answers.ask(q, image_files)
+
 
 
 # ---- summary table ----
