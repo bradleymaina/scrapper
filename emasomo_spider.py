@@ -136,6 +136,12 @@ while page < 40:
     time.sleep(1.5)
 
 # ---- save files to temporary directory  ----
+def save_results():
+    Path("results.json").write_text(json.dumps({
+        "model": answers.MODEL,
+        "questions": questions,
+    }, indent=2, ensure_ascii=False, default=str), encoding="utf-8")
+
 with tempfile.TemporaryDirectory(prefix="quiz__") as temp_dir:
     image_dir = Path(temp_dir)
 
@@ -164,6 +170,7 @@ with tempfile.TemporaryDirectory(prefix="quiz__") as temp_dir:
             image_files.extend(option["image_files"])
 
         q["gemini"] = answers.ask(q, image_files)
+        save_results()
 
         console.print(f"\n[bold cyan]Q{q['number']}[/bold cyan]")
         console.print(f"[green]Answer:[/green] {q['gemini'].get('answer')}")
