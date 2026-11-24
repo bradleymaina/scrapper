@@ -1,6 +1,16 @@
 # emasomo-spider
 
-Fetch questions and sources from  quizes and assignments on lms and save on system
+Fetch questions and sources from  quizes and assignments on emasomo , parse them to gemini using gemini api key , gemini process the images and questions and gives only the right answer . If it is multiple choice , gemini responds with eiher A , B , C or D and gives a confidence level ; either high or low . The answers are printed to stdout and are not saved to system . The questions and images sources for both questions and answers are saved to temporary directory which self destructs once it is closed. 
+
+## Benchmark
+This is a graph showing the answers that  the gemini got right  through the script vs what moodle (e-masomo) marked as the correct answer.
+
+The "correct answers" are what moodle marked as correct in a quiz done by me . I had a score of **28 / 30** which means , The script assumes 28 correct answers and 2 unknown , so , with that assumption , the model scored 15/15 removing the 2 questions which answers are not known. If we do not make that assumption , the model scored 15/17 which is a whooping 88% on the quiz. 
+
+This is the graph: 
+
+![Gemini benchmark results](./automata_theory_cat_benchmark.png )
+
 
 ## What it does
 
@@ -39,7 +49,7 @@ live  page (`/mod/quiz/attempt.php`).
 
 ### Example `questions.json` entry
 
-```json
+```jsong
 {
   "number": 1,
   "type": "multichoice",
