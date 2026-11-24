@@ -166,7 +166,7 @@ with tempfile.TemporaryDirectory(prefix="quiz__") as temp_dir:
     for q in questions: 
         image_files = q["question_image_files"].copy()
 
-        for options in q["options"]:
+        for option in q["options"]:
             image_files.extend(option["image_files"])
 
         q["gemini"] = answers.ask(q, image_files)
