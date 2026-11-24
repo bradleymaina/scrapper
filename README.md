@@ -38,45 +38,15 @@ live  page (`/mod/quiz/attempt.php`).
    Moodle's extra elements (question info, flags, response history) are
    removed. If a question is only an image and has no text, it is marked
    `text_missing`.
-5. **Saves the results** to the current directory:
-   - `questions.json`: all questions as structured data
-   - `questions.md`: an easy-to-read version with lettered options and
-     embedded images. Set `WRITE_MARKDOWN = False` to skip this file.
-6. **Prints a summary table** in the terminal listing each question's
-   number, type, a short preview, how many options and images it has, and
-   whether its text was found.
-7. **answers.py takes the questions and feeds them to gemini through their free api key and gemini answers the questions and gives back answers. Answers are saved in answers.md
-
-### Example `questions.json` entry
-
-```jsong
-{
-  "number": 1,
-  "type": "multichoice",
-  "question": "Which of the following ...?",
-  "question_images": [],
-  "options": [
-    { "text": "a. First option", "images": [] },
-    { "text": "b. Second option", "images": [] }
-  ],
-  "text_missing": false
-}
-```
+5. **Saves the results** to a temporary directory:
+6. **answers.py takes the questions and feeds them to gemini through their free api key and gemini answers the questions and gives back answers. Answers are printed to stdout.
 
 ### Settings
 
 These are set at the top of `emasomo_spider.py`:
 
-| Setting          | Purpose                                                        |
-| ---------------- | -------------------------------------------------------------- |
-| `COOKIE`         | Your `MoodleSession` cookie value from the browser             |
-| `PARAMS`         | The `attempt` and `cmid` from the quiz  page URL          |
-| `WRITE_MARKDOWN` | Whether to write `questions.md` as well as `questions.json`    |
-
-To scrape a different quiz, open its review page in the browser and copy the
-`attempt` and `cmid` values from the URL into `PARAMS`.
-
-> Only use it on your own account.
+**BREAKING CHANGE: The script prompts user for url , from which cmid and attempt are extracted and prompts users for cookie session value
+This replaces the old way where COOKIE value and PARAMS had to be manually fed . 
 
 
 ## requirements
@@ -105,15 +75,13 @@ pip install -r requirements.txt
 
 1. Fetch cookie session token from browser
 
-2. Replace session cookie with the current session cookie
+2. Fetch url from the current attempt
 
-```bash
-sed -i 's/^COOKIE = .*/COOKIE = "new_value"/' emasomo_spider.py
+3. The script prompts for both url and cookie session token , key both of them in 
 
-```
-new_value should be the new session token 
+4. Run
 
-3. Run
+N/B: You need to have gemini API key for  maximum  reliability . It's Free.
 
 ```bash
 python3 emasomo_spider.py
