@@ -45,7 +45,7 @@ live  page (`/mod/quiz/attempt.php`).
 
 These are set at the top of `emasomo_spider.py`:
 
-**BREAKING CHANGE: The script prompts user for url , from which cmid and attempt are extracted and prompts users for cookie session value
+**BREAKING CHANGE** : The script prompts user for url , from which cmid and attempt are extracted and prompts users for cookie session value
 This replaces the old way where COOKIE value and PARAMS had to be manually fed . 
 
 
